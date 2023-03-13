@@ -1,1 +1,36 @@
+---
+- name: Install DHCP server
+  apt:
+    name: dhcp-server
+    state: present
+  become: true
 
+- name: Configure DHCP server
+  template:
+    src: dhcpd.conf.j2
+    dest: /etc/dhcp/dhcpd.conf
+  notify: restart dhcpd
+
+# - name: Start DHCP server
+#   systemd:
+#     name: isc-dhcp-server
+#     state: started
+#   become: true
+
+# - name: Enable DHCP server at boot
+#   systemd:
+#     name: isc-dhcp-server
+#     enabled: yes
+#     masked: no
+#   become: true
+
+# - name: Reload systemd
+#   systemd:
+#     daemon_reload: yes
+#   become: true
+
+# - name: Restart DHCP server
+#   systemd:
+#     name: isc-dhcp-server
+#     state: restarted
+#   become: true
