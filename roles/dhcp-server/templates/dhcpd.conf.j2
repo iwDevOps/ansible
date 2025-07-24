@@ -2,17 +2,22 @@
 # DHCP Server Configuration file.
 
 # Subnet for Auto-IWA-Host
-subnet {{ subnet }} netmask {{ netmask }} {
-  option routers {{ router }};
-  range {{ range_start }} {{ range_stop}};
+subnet {{ dhcp_subnet }} netmask {{ dhcp_netmask }} {
+  option routers {{ dhcp_gateway }};
+  option domain-name-servers {{ dhcp_dns_servers }};
+  range {{ dhcp_range_start }} {{ dhcp_range_end }};
 }
 
 # Assign hostname, IP, & DNS based on MAC address
-host {{ hostname }} {
-    # MAC address of client (iwa-host) 
-    hardware ethernet {{ MAC_ADDR }};
-    # static IP address
-    fixed-address {{ ip_address }};
-    option host-name "{{ hostname }}";
-    option domain-name-servers {{ dns }};
+{% if dhcp_static_hosts is defined %}
+{% for host in dhcp_static_hosts %}
+host {{ host.hostname }} {
+    hardware ethernet {{ host.mac_address }};
+    fixed-address {{ host.ip_address }};
+    option host-name "{{ host.hostname }}";
+    {% if host.dns_servers is defined %}
+    option domain-name-servers {{ host.dns_servers }};
+    {% endif %}
 }
+{% endfor %}
+{% endif %}

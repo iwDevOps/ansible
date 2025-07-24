@@ -1,36 +1,28 @@
 ---
-- name: Install DHCP server
-  apt:
-    name: dhcp-server
+- name: Install DHCP server package
+  package:
+    name: "{{ dhcp_package_name }}"
     state: present
   become: true
+  tags: dhcp_install
 
 - name: Configure DHCP server
   template:
     src: dhcpd.conf.j2
-    dest: /etc/dhcp/dhcpd.conf
+    dest: "{{ dhcp_config_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+    backup: true
+  become: true
   notify: restart dhcpd
+  tags: dhcp_config
 
-# - name: Start DHCP server
-#   systemd:
-#     name: isc-dhcp-server
-#     state: started
-#   become: true
-
-# - name: Enable DHCP server at boot
-#   systemd:
-#     name: isc-dhcp-server
-#     enabled: yes
-#     masked: no
-#   become: true
-
-# - name: Reload systemd
-#   systemd:
-#     daemon_reload: yes
-#   become: true
-
-# - name: Restart DHCP server
-#   systemd:
-#     name: isc-dhcp-server
-#     state: restarted
-#   become: true
+- name: Start and enable DHCP server
+  systemd:
+    name: "{{ dhcp_service_name }}"
+    state: started
+    enabled: true
+    daemon_reload: true
+  become: true
+  tags: dhcp_service

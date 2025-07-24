@@ -1,0 +1,12 @@
+---
+- name: restart dhcpd
+  systemd:
+    name: "{{ dhcp_service_name }}"
+    state: restarted
+  become: true
+
+- name: reload dhcpd
+  systemd:
+    name: "{{ dhcp_service_name }}"
+    state: reloaded
+  become: true

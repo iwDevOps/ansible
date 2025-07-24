@@ -1,7 +1,38 @@
 ---
-subnet: 192.168.1.0
-netmask: 255.255.255.0
-range_start: 192.168.1.100
-range_end: 192.168.1.200
-gateway: 192.168.1.1
-dns: 8.8.8.8, 8.8.4.4
+# DHCP Server Configuration
+dhcp_package_name: "{{ _dhcp_package_name[ansible_os_family] | default('isc-dhcp-server') }}"
+dhcp_service_name: "{{ _dhcp_service_name[ansible_os_family] | default('isc-dhcp-server') }}"
+dhcp_config_path: "{{ _dhcp_config_path[ansible_os_family] | default('/etc/dhcp/dhcpd.conf') }}"
+
+# OS-specific package names
+_dhcp_package_name:
+  Debian: isc-dhcp-server
+  RedHat: dhcp-server
+  Suse: dhcp-server
+
+# OS-specific service names
+_dhcp_service_name:
+  Debian: isc-dhcp-server
+  RedHat: dhcpd
+  Suse: dhcpd
+
+# OS-specific config paths
+_dhcp_config_path:
+  Debian: /etc/dhcp/dhcpd.conf
+  RedHat: /etc/dhcp/dhcpd.conf
+  Suse: /etc/dhcpd.conf
+
+# Network Configuration
+dhcp_subnet: 192.168.1.0
+dhcp_netmask: 255.255.255.0
+dhcp_range_start: 192.168.1.100
+dhcp_range_end: 192.168.1.200
+dhcp_gateway: 192.168.1.1
+dhcp_dns_servers: "8.8.8.8, 8.8.4.4"
+
+# Static host reservations (optional)
+# dhcp_static_hosts:
+#   - hostname: workstation1
+#     mac_address: "00:11:22:33:44:55"
+#     ip_address: "192.168.1.50"
+#     dns_servers: "8.8.8.8, 8.8.4.4"
